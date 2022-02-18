@@ -1,0 +1,19 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: build
+  image: golang:1.16
+  commands:
+  - sh .drone.sh
+- name: release
+  image: plugins/github-release
+  settings:
+    files:
+      - release/proxmoxsd_*.tar.gz
+      - release/proxmoxsd_checksums.txt
+    api_key:
+      from_secret: github_token
+  when:
+    event: tag
